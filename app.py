@@ -2,7 +2,12 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Rota que o Google Sheets vai acessar
+# NOVA ROTA: Isso é o que vai aparecer quando você abrir o link no navegador
+@app.route('/', methods=['GET'])
+def home():
+    return "✅ Servidor do Bot da SEDUC está ONLINE e aguardando chamados!"
+
+# ROTA DO WEBHOOK: Aqui é onde o Google Sheets vai enviar os dados ocultos
 @app.route('/webhook', methods=['POST'])
 def handle_webhook():
     dados = request.json
