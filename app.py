@@ -2,23 +2,37 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# This creates a "listening station" at your-url.com/webhook
+# Rota que o Google Sheets vai acessar
 @app.route('/webhook', methods=['POST'])
 def handle_webhook():
-    # 1. Receive the data sent by Google Apps Script
-    data = request.json
+    dados = request.json
     
-    protocol = data.get('protocol')
-    location = data.get('location')
-    issue = data.get('issue')
+    protocolo = dados.get('protocol')
+    local = dados.get('location')
+    problema = dados.get('issue')
     
-    # 2. Insert your existing WhatsApp logic here!
-    # You can paste the code you previously used to message the WhatsApp group.
-    # Use the 'protocol', 'location', and 'issue' variables in your message text.
-    print(f"🚨 URGENT: {protocol} at {location}. Issue: {issue}")
+    # Texto formatado da mensagem para o WhatsApp
+    mensagem_whatsapp = (
+        f"🚨 *REPARO URGENTE SEDUC* 🚨\n\n"
+        f"*Protocolo:* {protocolo}\n"
+        f"*Local:* {local}\n"
+        f"*Problema:* {problema}\n\n"
+        f"Por favor, verifique imediatamente."
+    )
     
-    # 3. Tell Google Sheets the message was received successfully
-    return jsonify({"status": "success", "message": "WhatsApp alert triggered!"}), 200
+    # Exibe no terminal do servidor
+    print(f"🚨 URGENTE recebido: Protocolo {protocolo} no local {local}.")
+    
+    # =========================================================
+    # INSIRA SUA LÓGICA DE ENVIO DO WHATSAPP AQUI
+    # (Ex: pywhatkit.sendwhatmsg_to_group(...) passando a variável mensagem_whatsapp)
+    # =========================================================
+    
+    # Responde ao Google Sheets que tudo ocorreu bem
+    return jsonify({
+        "status": "sucesso", 
+        "mensagem": "Alerta do WhatsApp acionado com sucesso!"
+    }), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
